@@ -1,17 +1,24 @@
-int[][] stage = new int[0][0];
+//初期設定
+//何か変更するときはここをいじってね
+int fr = 60; //フレームレート
+int sx = 30; // マス目の大きさX
+int sy = 30; // マス目の大きさY
+int sp = 10; // スピード
+String stageName = "testStage.txt";// ステージ名
+
+//本プログラム
+int[][] stage = new int[0][0]; //ステージデータ
 int myX,myY;  // 自機の位置
 int myLife;   // 自機ライフ
 int myDirect; // 自機の向き
 int itemCnt;  // アイテムの数
 int score;    // スコア
-
-int sx=40,sy = 40; // マス目の大きさ
   
 int speed; // 一マス移動あたりの速さ．大きければ遅い
 int timer; // 移動タイマー．
 int tmpDirect=-1; // 向きの予約．
 
-boolean gameContinue = true;
+boolean gameContinue = false;
   /*********************
   ステージの番号メモ
   0,null = 空間．出たらアウト．
@@ -20,15 +27,19 @@ boolean gameContinue = true;
   3      = ゴール．タドリツキナサイ．
   4,5,6,7= 初期スポーン地点．左から上・右・下・左．
   **********************/
-void init(String st, int sp){
+void init(String st, int sp, int lf){
   //初期化設定．
-  //引数... st:ステージファイル名 sp:ゲームスピード
+  //引数... st:ステージファイル名 sp:ゲームスピード lf:ライフ
   
-  loadStage(st);
+  itemCnt = 0;
   speed = sp;
-  myLife = 3;
+  myLife = lf;
   score = 0;
   timer = 0;
+  tmpDirect=-1;
+  stage = new int[0][0];
+  loadStage(st);
+  gameContinue = true;
 }
 
 void loadStage(String filename){
@@ -37,17 +48,17 @@ void loadStage(String filename){
   
   String[] lines = loadStrings(filename);
   for(int i=0; i<lines.length;i++){
-    int[] tmp = new int[0];
-    for(int j=0; j<lines[i].length();j++){
-      tmp =(int[])append(tmp,int(lines[i].charAt(j))-48);
-      if(tmp[j] == 2)itemCnt ++;
-      if(tmp[j] >= 4 && tmp[j] <= 7){
-        myX = j;
-        myY = i;
-        myDirect = tmp[j] - 4;
+      int[] tmp = new int[0];
+      for(int j=0; j<lines[i].length();j++){
+        tmp =(int[])append(tmp,int(lines[i].charAt(j))-48);
+        if(tmp[j] == 2)itemCnt ++;
+        if(tmp[j] >= 4 && tmp[j] <= 7){
+          myX = j;
+          myY = i;
+          myDirect = tmp[j] - 4;
+        }
       }
-    }
-    stage = (int[][])append(stage,tmp);
+      stage = (int[][])append(stage,tmp);
   }
 }
 
@@ -146,43 +157,6 @@ void showBlock(int x, int y,int type){
 void move(){
   //移動関数．
   //ゲームスピードに合わせて疑似なめらか移動を行う．
-  /*
-  if(tmpDirect==-1)tmpDirect = myDirect;
-  if(timer < speed){
-    timer++;
-    switch(tmpDirect){
-      case 0:
-      showStage(0,sy * timer / speed);
-      break;
-      case 1:
-      showStage(-sx * timer / speed,0);
-      break;
-      case 2:
-      showStage(0,-sy * timer / speed);
-      break;
-      case 3:
-      showStage(sx * timer / speed,0);
-    }
-  }else{
-    timer = 0;
-    switch(tmpDirect){
-      case 0:
-      myY--;
-      break;
-      case 1:
-      myX++;
-      break;
-      case 2:
-      myY++;
-      break;
-      case 3:
-      myX--;
-    }
-    showStage(0,0);
-    tmpDirect = -1;
-    movedProcessing();
-  }
-  */
   if(timer >= speed){
     timer = 0;
     switch(tmpDirect){
@@ -250,6 +224,10 @@ void movedProcessing(){
   }
 }
 
+void miss(){
+  
+}
+
 void gameover(boolean clear){
   //ゲームオーバー処理．
   //ひっきすう clear:クリアか否か．
@@ -259,14 +237,21 @@ void gameover(boolean clear){
   }else{
     fill(200,0,0);
   }
-  text("GAME OVER",width/10,height/2+10);
+  text("GAME OVER",width/2-200,height/2+10);
+  textSize(16);
   gameContinue = false;
 }
 
 void setup(){
-  size(720,480);
-  frameRate(30);
-  init("testStage.txt",10);
+  size(1280,720);
+  frameRate(fr);
+  
+  loadStage(stageName);
+  showStage(0,0);
+  textSize(100);
+  fill(200,200,100);
+  text("Press the Enter",width/2-350,height/5+10);
+  textSize(16);
 }
 void draw(){
   if(gameContinue){
@@ -276,4 +261,6 @@ void draw(){
 
 void keyPressed(){
   turn();
+  if(keyCode == ENTER)
+  init(stageName,sp,3);
 }
