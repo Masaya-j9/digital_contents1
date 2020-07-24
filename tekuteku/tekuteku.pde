@@ -10,6 +10,8 @@ int sx=40,sy = 40; // マス目の大きさ
 int speed; // 一マス移動あたりの速さ．大きければ遅い
 int timer; // 移動タイマー．
 int tmpDirect=-1; // 向きの予約．
+
+boolean gameContinue = true;
   /*********************
   ステージの番号メモ
   0,null = 空間．出たらアウト．
@@ -98,6 +100,7 @@ void showStage(int dx,int dy){
       }catch(Exception e){}
     }
   }
+  fill(255);
   ellipse(width/2,height/2,sx,sy);
 }
 void showBlock(int x, int y,int type){
@@ -140,16 +143,10 @@ void showBlock(int x, int y,int type){
   stroke(1);
 }
 
-void getItem(){
-  //アイテム取得関数．
-  //めっちゃ単純だけど関数化．
-  stage[myY][myX] = 1;
-  itemCnt --;
-}
-
 void move(){
   //移動関数．
-  //ゲームスピードに合わせ，
+  //ゲームスピードに合わせて疑似なめらか移動を行う．
+  /*
   if(tmpDirect==-1)tmpDirect = myDirect;
   if(timer < speed){
     timer++;
@@ -167,7 +164,6 @@ void move(){
       showStage(sx * timer / speed,0);
     }
   }else{
-    println(tmpDirect);
     timer = 0;
     switch(tmpDirect){
       case 0:
@@ -184,9 +180,88 @@ void move(){
     }
     showStage(0,0);
     tmpDirect = -1;
+    movedProcessing();
+  }
+  */
+  if(timer >= speed){
+    timer = 0;
+    switch(tmpDirect){
+      case 0:
+      myY--;
+      break;
+      case 1:
+      myX++;
+      break;
+      case 2:
+      myY++;
+      break;
+      case 3:
+      myX--;
+    }
+    showStage(0,0);
+    tmpDirect = -1;
+    movedProcessing();
+  }
+  if(gameContinue){
+    if(tmpDirect==-1)tmpDirect = myDirect;
+    switch(tmpDirect){
+      case 0:
+      showStage(0,sy * timer / speed);
+      break;
+      case 1:
+      showStage(-sx * timer / speed,0);
+      break;
+      case 2:
+      showStage(0,-sy * timer / speed);
+      break;
+      case 3:
+      showStage(sx * timer / speed,0);
+    }
+    timer++;
   }
 }
 
+void movedProcessing(){
+  //移動後処理関数．
+  //移動した先が何かで処理を変えましょう．
+  int type = stage[myY][myX];
+  switch(type){
+    case 2:
+    stage[myY][myX] = 1;
+    itemCnt --;
+    break;
+    
+    case 3:
+    if(itemCnt <= 0){
+      gameover(true);
+    }
+    break;
+    
+    case 1:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    //ただの道
+    break;
+    
+    default:
+    gameover(false);
+  }
+}
+
+void gameover(boolean clear){
+  //ゲームオーバー処理．
+  //ひっきすう clear:クリアか否か．
+  textSize(100);
+  if(clear){
+    fill(200,200,100);
+  }else{
+    fill(200,0,0);
+  }
+  text("GAME OVER",width/10,height/2+10);
+  gameContinue = false;
+}
 
 void setup(){
   size(720,480);
@@ -194,7 +269,9 @@ void setup(){
   init("testStage.txt",10);
 }
 void draw(){
-  move();
+  if(gameContinue){
+    move();
+  }
 }
 
 void keyPressed(){
