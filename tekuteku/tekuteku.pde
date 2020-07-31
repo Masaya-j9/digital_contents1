@@ -15,7 +15,7 @@ int itemCnt;  // アイテムの数
 int score;    // スコア
   
 int speed; // 一マス移動あたりの速さ．大きければ遅い
-int timer; // 移動タイマー．
+int timer = -1; // 移動タイマー．
 int tmpDirect=-1; // 向きの予約．
 
 boolean gameContinue = false;
@@ -172,6 +172,7 @@ void move(){
       case 3:
       myX--;
     }
+    score --;
     showStage(0,0);
     tmpDirect = -1;
     movedProcessing();
@@ -201,6 +202,7 @@ void movedProcessing(){
   int type = stage[myY][myX];
   switch(type){
     case 2:
+    score += 100;
     stage[myY][myX] = 1;
     itemCnt --;
     break;
@@ -220,12 +222,20 @@ void movedProcessing(){
     break;
     
     default:
-    gameover(false);
+    miss();
   }
 }
 
 void miss(){
-  
+  if(myLife <= 0){
+    gameover(false);
+  }else{
+    gameContinue = false;
+    textSize(100);
+    fill(200,0,0);
+    text("MISS! Press The Enter",width/2-500,height/2+10);
+    textSize(16);
+  }
 }
 
 void gameover(boolean clear){
@@ -240,6 +250,7 @@ void gameover(boolean clear){
   text("GAME OVER",width/2-200,height/2+10);
   textSize(16);
   gameContinue = false;
+  timer = -1;
 }
 
 void setup(){
@@ -261,6 +272,8 @@ void draw(){
 
 void keyPressed(){
   turn();
-  if(keyCode == ENTER)
-  init(stageName,sp,3);
+  if(keyCode == ENTER){
+    if(timer == -1)init(stageName,sp,3);
+    else init(stageName,sp,myLife-1);
+  }
 }
