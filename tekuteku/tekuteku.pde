@@ -4,7 +4,7 @@ int fr = 60; //フレームレート
 int sx = 30; // マス目の大きさX
 int sy = 30; // マス目の大きさY
 int sp = 10; // スピード
-String stageName = "testStage.txt";// ステージ名
+String stageName = "Stage_Hard2.txt";// ステージ名
 
 //本プログラム
 int[][] stage = new int[0][0]; //ステージデータ
