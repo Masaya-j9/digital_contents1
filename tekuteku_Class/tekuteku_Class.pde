@@ -1,37 +1,34 @@
-//初期設定
-//何か変更するときはここをいじってね
-int fr = 60; //フレームレート
-int sx = 30; // マス目の大きさX
-int sy = 30; // マス目の大きさY
-int sp = 10; // スピード
-String stageName = "Stage_Hard1.txt";// ステージ名
+//Setting
+int fr = 60; // Frame Rate
+int sx = 30; // mass Size X
+int sy = 30; // mass Size Y
+int sp = 10; // Game Speed
+String stageName = "Stage_Hard1.txt";// Stage Name
 
 class Tekuteku{
-  
-  //本プログラム
-  int[][] stage = new int[0][0]; //ステージデータ
-  int myX,myY;  // 自機の位置
-  int myLife;   // 自機ライフ
-  int myDirect; // 自機の向き
-  int itemCnt;  // アイテムの数
-  int score;    // スコア
+  int[][] stage = new int[0][0]; //stage Data
+  int myX,myY;  // XY
+  int myLife;   // Life
+  int myDirect; // Direct ^0 >1 _2 <3
+  int itemCnt;  // items
+  int score;    // Score
     
-  int speed; // 一マス移動あたりの速さ．大きければ遅い
-  int timer = -1; // 移動タイマー．
-  int tmpDirect=-1; // 向きの予約．
+  int speed; // Game Speed (frame/1mass)
+  int timer = -1; // move TimerCnt
+  int tmpDirect=-1; // Direct Tmp
 
-  boolean gameContinue = false;
+  boolean gameContinue = false; //is Gaming
   /*********************
   ステージの番号メモ
-  0,null = 空間．出たらアウト．
-  1      = 道．安全．
-  2      = アイテム．全部とれ．
-  3      = ゴール．タドリツキナサイ．
-  4,5,6,7= 初期スポーン地点．左から上・右・下・左．
+  0,null = out
+  1      = road
+  2      = item
+  3      = goal
+  4,5,6,7= spawn and Direct
   **********************/
+  
   void init(String st, int sp, int lf){
-    //初期化設定．
-    //引数... st:ステージファイル名 sp:ゲームスピード lf:ライフ
+    //st:stageName sp:gameSpeed lf:Life
     
     itemCnt = 0;
     speed = sp;
@@ -45,8 +42,7 @@ class Tekuteku{
   }
 
   void loadStage(String filename){
-    //ステージ読み込み．
-    //ひきすう filename:ステージファイル名
+    //filename:File Name
   
     String[] lines = loadStrings(filename);
     for(int i=0; i<lines.length;i++){
@@ -65,8 +61,7 @@ class Tekuteku{
   }
 
   void turn(){
-    //向き変更かんすう．
-    //keyPressedに入れてほしい
+    //Prease enter KeyPressed()
     
     if(keyCode == UP){
       myDirect = 0;
@@ -80,9 +75,8 @@ class Tekuteku{
   }
 
   void showStage(int dx,int dy){
-    //ステージ表示関数．
     //軽量化のために，画面内のモノだけ描写するようにしたい．
-    //引数　dx,dy:move()用の座標ずれ
+    //dx,dy:CoordinateGap for move()
     background(0);
     int wCnt = width/sx+2;
     int hCnt = height/sy+2;
@@ -111,8 +105,7 @@ class Tekuteku{
     text("Life:"+myLife,0,height);
   }
   void showBlock(int x, int y,int type){
-    //一マス一マスの描写関数．
-    //引数 x,y:座標 type:マス目情報．上記参照
+    //x,y:Coordinate type:mass Type
     noStroke();
     rectMode(CENTER);
     
@@ -151,8 +144,7 @@ class Tekuteku{
   }  
 
   void move(){
-    //移動関数．
-    //ゲームスピードに合わせて疑似なめらか移動を行う．
+    //move
     if(timer >= speed){
       timer = 0;
       switch(tmpDirect){
@@ -193,8 +185,7 @@ class Tekuteku{
   }
 
   void movedProcessing(){
-    //移動後処理関数．
-    //移動した先が何かで処理を変えましょう．
+    //moved Process
     int type = stage[myY][myX];
     switch(type){
       case 2:
@@ -235,8 +226,7 @@ class Tekuteku{
   }
 
   void gameover(boolean clear){
-    //ゲームオーバー処理．
-    //ひっきすう clear:クリアか否か．
+    // clear:is Clear?
     textSize(100);
     if(clear){
       fill(200,200,100);
