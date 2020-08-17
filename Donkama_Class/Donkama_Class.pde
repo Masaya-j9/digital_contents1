@@ -71,7 +71,7 @@ class Donkama{
       fill(255);
       textSize(25);
       text(tapKey[i],tapX[i],tapY[i]);
-      tapCnt[i]+=2;
+      tapCnt[i]+=1;
       noFill();
       ellipse(tapX[i],tapY[i],(tapR+(tapBPM[i]-tapCnt[i]))*2,(tapR+(tapBPM[i]-tapCnt[i]))*2);
       
