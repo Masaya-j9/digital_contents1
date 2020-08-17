@@ -1,21 +1,21 @@
-int[] accuracyData = {15,10};//動作し始めるタイミング /　ミスじゃないタイミング
+int[] accuracyData = {15,10};//Good / normal
 
 
 class Donkama{
-  int tapN = 2;
-  int[] tapBPM;
-  int[] tapCnt;
-  String[] tapKey;
+  int tapN = 2; //tapper Num
+  int[] tapBPM; //as Name
+  int[] tapCnt; //BPMcnt
+  String[] tapKey; //as Name
 
-  int[] tapX;
-  int[] tapY;
-  int   tapR;
+  int[] tapX; //as Name
+  int[] tapY; //as Name
+  int   tapR; //as Name
 
-  int life;
-  int score;
-  int invCnt;
+  int life; //my Life
+  int score; //as Name
+  int invCnt; //Muteki Cnt
 
-  boolean ingame;
+  boolean ingame; // is Gaming?
   void init(){
     ingame = false;
     life = 3;
