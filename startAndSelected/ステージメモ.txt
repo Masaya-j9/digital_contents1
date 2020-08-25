@@ -1,0 +1,8 @@
+Easy
+スピード20
+Normal
+すぴーど10
+Hard
+スピード5
+Lunatic
+スピード2
